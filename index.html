@@ -11,11 +11,6 @@
     background:#0d1117;color:#e6edf3;box-sizing:border-box;margin-bottom:12px}
   button{width:100%;padding:11px;font-size:15px;font-weight:700;border:none;border-radius:8px;
     background:#58a6ff;color:#0d1117;cursor:pointer}
-  .radar-link{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:11px;
-    box-sizing:border-box;border:1px solid #3fb950;border-radius:8px;color:#7ee787;text-decoration:none;
-    font-size:14px;font-weight:700;margin-top:10px;background:rgba(46,160,67,.08)}
-  .radar-link:hover{background:rgba(46,160,67,.16)}
-  .radar-note{display:block;color:#8b949e;font-size:11px;margin-top:7px}
   .err{color:#f85149;font-size:13px;height:18px;margin-top:10px}
 </style></head><body>
 <div class="box">
@@ -26,8 +21,6 @@
     <input id="rem" type="checkbox" style="width:auto;margin:0"> 在這台裝置記住密碼（下次自動解鎖）
   </label>
   <button onclick="go()">解鎖</button>
-  <a class="radar-link" href="https://oi-capital-radar.q22708153.chatgpt.site/" target="_blank" rel="noopener noreferrer">↗ OI 資金雷達</a>
-  <span class="radar-note">私人唯讀篩選器・需以 ChatGPT 帳號登入</span>
   <div class="err" id="err"></div>
 </div>
 <script>
@@ -40,14 +33,39 @@ async function unlock(pw){
     km, {name:"AES-GCM", length:256}, false, ["decrypt"]);
   const pt = await crypto.subtle.decrypt({name:"AES-GCM", iv:b2u(IV)}, key, b2u(CT));
   const html = new TextDecoder().decode(pt);
-  const oiEntry = `<style>
-    .oi-radar-entry{position:fixed;right:18px;bottom:18px;z-index:2147483647;display:flex;align-items:center;gap:8px;
-      padding:12px 16px;border:1px solid #7ee787;border-radius:999px;background:#16351f;color:#b7f7bf;
-      text-decoration:none;font:800 14px/1 system-ui,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.38)}
-    .oi-radar-entry:hover{background:#214b2d;transform:translateY(-1px)}
-    @media(max-width:600px){.oi-radar-entry{right:12px;bottom:12px;padding:11px 14px;font-size:13px}}
-  </style><a class="oi-radar-entry" href="https://oi-capital-radar.q22708153.chatgpt.site/" target="_blank" rel="noopener noreferrer" aria-label="開啟 OI 資金雷達">↗ OI 資金雷達</a>`;
-  const enhanced = /<\/body>/i.test(html) ? html.replace(/<\/body>/i, `${oiEntry}</body>`) : `${html}${oiEntry}`;
+  const oiTabs = `<style>
+    #radar-site-tabs{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:2147483647;
+      display:flex;gap:4px;padding:4px;border:1px solid #30363d;border-radius:12px;background:rgba(13,17,23,.96);
+      box-shadow:0 8px 28px rgba(0,0,0,.42);backdrop-filter:blur(10px)}
+    #radar-site-tabs button{width:auto;min-width:108px;padding:9px 14px;border:0;border-radius:8px;background:transparent;
+      color:#8b949e;font:800 13px/1 system-ui,sans-serif;cursor:pointer}
+    #radar-site-tabs button.active{background:#238636;color:#fff}
+    #oi-screener-panel{position:fixed;inset:0;z-index:2147483646;display:none;padding-top:58px;background:#080b09}
+    #oi-screener-panel iframe{display:block;width:100%;height:calc(100vh - 58px);border:0;background:#080b09}
+    #oi-screener-fallback{position:absolute;right:14px;top:16px;color:#7ee787;font:700 12px system-ui,sans-serif;text-decoration:none}
+    @media(max-width:600px){#radar-site-tabs{top:7px}#radar-site-tabs button{min-width:92px;padding:8px 10px;font-size:12px}}
+  </style>
+  <nav id="radar-site-tabs" aria-label="雷達功能分頁">
+    <button type="button" class="active" data-radar-tab="market">市場雷達</button>
+    <button type="button" data-radar-tab="oi">OI 篩選器</button>
+  </nav>
+  <section id="oi-screener-panel" aria-label="OI 篩選器">
+    <a id="oi-screener-fallback" href="https://oi-capital-radar.q22708153.chatgpt.site/" target="_blank" rel="noopener noreferrer">另開視窗 ↗</a>
+    <iframe title="OI 資金雷達" src="https://oi-capital-radar.q22708153.chatgpt.site/" loading="lazy" referrerpolicy="no-referrer"></iframe>
+  </section>
+  <script>(function(){
+    var tabs=document.getElementById('radar-site-tabs');
+    var panel=document.getElementById('oi-screener-panel');
+    var marketNodes=Array.prototype.filter.call(document.body.children,function(el){return el!==tabs&&el!==panel&&el.tagName!=='SCRIPT'&&el.tagName!=='STYLE';});
+    tabs.addEventListener('click',function(event){
+      var button=event.target.closest('button[data-radar-tab]'); if(!button)return;
+      var showOi=button.getAttribute('data-radar-tab')==='oi';
+      Array.prototype.forEach.call(tabs.querySelectorAll('button'),function(item){item.classList.toggle('active',item===button);});
+      marketNodes.forEach(function(node){node.style.display=showOi?'none':'';});
+      panel.style.display=showOi?'block':'none';
+    });
+  })();<\/script>`;
+  const enhanced = /<\/body>/i.test(html) ? html.replace(/<\/body>/i, `${oiTabs}</body>`) : `${html}${oiTabs}`;
   document.open(); document.write(enhanced); document.close();
 }
 async function go(){
