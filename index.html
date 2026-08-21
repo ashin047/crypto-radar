@@ -40,7 +40,15 @@ async function unlock(pw){
     km, {name:"AES-GCM", length:256}, false, ["decrypt"]);
   const pt = await crypto.subtle.decrypt({name:"AES-GCM", iv:b2u(IV)}, key, b2u(CT));
   const html = new TextDecoder().decode(pt);
-  document.open(); document.write(html); document.close();
+  const oiEntry = `<style>
+    .oi-radar-entry{position:fixed;right:18px;bottom:18px;z-index:2147483647;display:flex;align-items:center;gap:8px;
+      padding:12px 16px;border:1px solid #7ee787;border-radius:999px;background:#16351f;color:#b7f7bf;
+      text-decoration:none;font:800 14px/1 system-ui,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.38)}
+    .oi-radar-entry:hover{background:#214b2d;transform:translateY(-1px)}
+    @media(max-width:600px){.oi-radar-entry{right:12px;bottom:12px;padding:11px 14px;font-size:13px}}
+  </style><a class="oi-radar-entry" href="https://oi-capital-radar.q22708153.chatgpt.site/" target="_blank" rel="noopener noreferrer" aria-label="開啟 OI 資金雷達">↗ OI 資金雷達</a>`;
+  const enhanced = /<\/body>/i.test(html) ? html.replace(/<\/body>/i, `${oiEntry}</body>`) : `${html}${oiEntry}`;
+  document.open(); document.write(enhanced); document.close();
 }
 async function go(){
   const pw = document.getElementById("pw").value;
