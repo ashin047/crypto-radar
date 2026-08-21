@@ -11,6 +11,11 @@
     background:#0d1117;color:#e6edf3;box-sizing:border-box;margin-bottom:12px}
   button{width:100%;padding:11px;font-size:15px;font-weight:700;border:none;border-radius:8px;
     background:#58a6ff;color:#0d1117;cursor:pointer}
+  .radar-link{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:11px;
+    box-sizing:border-box;border:1px solid #3fb950;border-radius:8px;color:#7ee787;text-decoration:none;
+    font-size:14px;font-weight:700;margin-top:10px;background:rgba(46,160,67,.08)}
+  .radar-link:hover{background:rgba(46,160,67,.16)}
+  .radar-note{display:block;color:#8b949e;font-size:11px;margin-top:7px}
   .err{color:#f85149;font-size:13px;height:18px;margin-top:10px}
 </style></head><body>
 <div class="box">
@@ -21,6 +26,8 @@
     <input id="rem" type="checkbox" style="width:auto;margin:0"> 在這台裝置記住密碼（下次自動解鎖）
   </label>
   <button onclick="go()">解鎖</button>
+  <a class="radar-link" href="https://oi-capital-radar.q22708153.chatgpt.site/" target="_blank" rel="noopener noreferrer">↗ OI 資金雷達</a>
+  <span class="radar-note">私人唯讀篩選器・需以 ChatGPT 帳號登入</span>
   <div class="err" id="err"></div>
 </div>
 <script>
